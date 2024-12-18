@@ -283,14 +283,27 @@ int ff_h2645_packet_split(H2645Packet *pkt, const uint8_t *buf, int length,
 
         if (bytestream2_tell(&bc) == next_avc) {
             int i = 0;
+            //change adapter
+            int workStearm = 0;
+            if (nal_length_size == 1) {
+                nal_length_size = 4;
+                workStearm = 1;
+            }
+            //change adapter
+
             extract_length = get_nalsize(nal_length_size,
                                          bc.buffer, bytestream2_get_bytes_left(&bc), &i, logctx);
             if (extract_length < 0)
                 return extract_length;
 
             bytestream2_skip(&bc, nal_length_size);
-
-            next_avc = bytestream2_tell(&bc) + extract_length;
+            if (workStearm) {
+                next_avc = bytestream2_tell(&bc) + extract_length + 4;
+             } else{
+                //src 
+                next_avc = bytestream2_tell(&bc) + extract_length;
+                //src
+             }
         } else {
             int buf_index;
 

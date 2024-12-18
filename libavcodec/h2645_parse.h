@@ -106,6 +106,12 @@ static inline int get_nalsize(int nal_length_size, const uint8_t *buf,
         return AVERROR(EAGAIN);
     }
 
+    //change
+    if (nal_length_size == 1) {
+      nal_length_size = 4;
+    }
+    //change
+
     for (i = 0; i < nal_length_size; i++)
         nalsize = ((unsigned)nalsize << 8) | buf[(*buf_index)++];
     if (nalsize <= 0 || nalsize > buf_size - *buf_index) {
